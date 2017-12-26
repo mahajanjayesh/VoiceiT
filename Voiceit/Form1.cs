@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Speech.Synthesis;
-using System.Speech.Recognition;
 using System.Media;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -9,12 +7,16 @@ using System.Drawing;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Net.Mail;
+using System.Speech;
+using System.Speech.Synthesis;
+using System.Speech.Recognition;
 
-
-namespace WindowsFormsApplication3
+namespace Voiceit
 {
     public partial class Form1 : Form
     {
+
+
 
 
         SpeechSynthesizer synthesizer;
@@ -27,13 +29,13 @@ namespace WindowsFormsApplication3
 
 
 
-        string VoiceOn = @"C:\Users\Jayesh\Documents\Visual Studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\Sounds\On.wav";
+        string VoiceOn = @"C:\Users\Jayesh\documents\visual studio 2017\Projects\Voiceit\Voiceit\Voice\On.wav";
         string VoiceOff = @"C:\Users\Jayesh\Documents\Visual Studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\Sounds\Off.wav";
         string VoiceUnderstood = @"C:\Users\Jayesh\Documents\Visual Studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\Sounds\Understood.wav";
 
-        //public object MessageBoxButton { get; private set; }
-        //public object MessageBoxImage { get; private set; }
-        
+        public object MessageBoxButton { get; private set; }
+        public object MessageBoxImage { get; private set; }
+
 
 
         public Form1()
@@ -49,10 +51,10 @@ namespace WindowsFormsApplication3
             Choices myList = new Choices();
 
             myList.Add(new string[] { "hi", "morning", "social", "open", "afternoon", "evening", "shutdown" , "restart" ,"notepad", "open chrome",
-                "who are you", "open facebook", "open twitter" , "open github", "open my college mail" , "open my mail" , "lock" ,
+                "who are you?", "open facebook", "open twitter" , "open github", "open my college mail" , "open my mail" , "lock" ,
                 "light on" , "light off" , "fan on" , "fan off" , "switch on the light", "switch off the light", "switch on the fan", "switch off the fan","curtain open",
-                "open the curtain","curtain close","close the curtain","curtain open halfway","open half curtain" , "weather" ,"show weather" , "current weather" ,"weather forecast","Show Cricket News",
-                "Cricket info" , "Cricket information" ,"Cricket News" , "Live Cricket Score" , "ABC News" , "BBC Sport" , "BBC" , "Times of india" , "TOI" , "news from google"});
+                "open the curtain","curtain close","close the curtain","curtain open halfway","open half curtain" , "weather" ,"show weather" , "current weather" ,"forecast","Show Cricket News",
+                "Cricket info" , "Cricket information" ,"Cricket News" , "Live Cricket Score" , "ABC News"});
 
             Grammar grammar = new Grammar(new GrammarBuilder(myList));
             recognition.LoadGrammar(grammar);
@@ -515,13 +517,13 @@ namespace WindowsFormsApplication3
             {
 
                 //to be done
-                pictureBox1_Click(this.pictureBox1, null);
+
                 string results = "";
 
                 using (WebClient wc = new WebClient())
                 {
 
-                    
+
                     results = wc.DownloadString("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22pune%20and%20unit%20%3D%20'C'%2C%20in%22%20)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys");
                 }
 
@@ -535,13 +537,13 @@ namespace WindowsFormsApplication3
                 var temp = items.temp;
                 var text = items.text;
 
-               
+
 
 
                 var tempc = (0.5555) * (Convert.ToDouble(temp) - 32);
 
 
-                
+                pictureBox1_Click(this.pictureBox1, null);
 
                 synthesizer.SpeakAsync("Current Weather for Pune is as follows");
 
@@ -562,10 +564,10 @@ namespace WindowsFormsApplication3
 
                 Console.Read();
 
-                
+
             }
 
-            else if (e.Result.Text == "weather forecast")
+            else if (e.Result.Text == "forecast")
             {
 
                 string results = "";
@@ -607,7 +609,7 @@ namespace WindowsFormsApplication3
                 System.Threading.Thread.Sleep(500);
 
                 richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
-                richTextBox1.AppendText("Opening Cricket News" +  Environment.NewLine);
+                richTextBox1.AppendText("Opening Cricket News" + Environment.NewLine);
                 synthesizer.Speak("Opening Cricket News");
                 System.Diagnostics.Process.Start(@"http://www.cricbuzz.com/cricket-news");
                 //string results = "";
@@ -630,7 +632,7 @@ namespace WindowsFormsApplication3
             {
                 soundPlayer.SoundLocation = VoiceUnderstood;
                 soundPlayer.Play();
-               
+
                 System.Threading.Thread.Sleep(500);
                 pictureBox1_Click(this.pictureBox1, null);
                 richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
@@ -643,7 +645,7 @@ namespace WindowsFormsApplication3
             {
                 soundPlayer.SoundLocation = VoiceUnderstood;
                 soundPlayer.Play();
-                
+
                 System.Threading.Thread.Sleep(500);
                 pictureBox1_Click(this.pictureBox1, null);
                 richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
@@ -658,82 +660,23 @@ namespace WindowsFormsApplication3
                 soundPlayer.Play();
                 pictureBox1_Click(this.pictureBox1, null);
                 System.Threading.Thread.Sleep(500);
-               
+
                 richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
                 richTextBox1.AppendText("Opening ABC News" + Environment.NewLine);
                 synthesizer.Speak("Opening ABC News");
 
-                 Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\newsapi\abc_News.html");
-               
-
-            }
-            else if (e.Result.Text == "BBC Sport")
-            {
-                soundPlayer.SoundLocation = VoiceUnderstood;
-                soundPlayer.Play();
-                pictureBox1_Click(this.pictureBox1, null);
-                System.Threading.Thread.Sleep(500);
-
-                richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
-                richTextBox1.AppendText("Opening BBC Sport" + Environment.NewLine);
-                synthesizer.Speak("Opening BBC Sport");
-
-                Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\newsapi\bbc_Sport.html");
-
-
-            }
-            else if (e.Result.Text == "BBC")
-            {
-                soundPlayer.SoundLocation = VoiceUnderstood;
-                soundPlayer.Play();
-                pictureBox1_Click(this.pictureBox1, null);
-                System.Threading.Thread.Sleep(500);
-
-                richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
-                richTextBox1.AppendText("Opening BBC News" + Environment.NewLine);
-                synthesizer.Speak("Opening BBC News");
-
-                Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\newsapi\bbc_News.html");
-
-
-            }
-            else if (e.Result.Text == "Times of india" || e.Result.Text == "TOI")
-            {
-                soundPlayer.SoundLocation = VoiceUnderstood;
-                soundPlayer.Play();
-                pictureBox1_Click(this.pictureBox1, null);
-                System.Threading.Thread.Sleep(500);
-
-                richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
-                richTextBox1.AppendText("Opening Times Of India" + Environment.NewLine);
-                synthesizer.Speak("Opening Times Of India");
-
-                Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\newsapi\toi.html");
+                Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\angula.html");
 
 
             }
 
-            else if (e.Result.Text == "news from google")
-            {
-                soundPlayer.SoundLocation = VoiceUnderstood;
-                soundPlayer.Play();
-                pictureBox1_Click(this.pictureBox1, null);
-                System.Threading.Thread.Sleep(500);
 
-                richTextBox1.AppendText("You:" + e.Result.Text + Environment.NewLine);
-                richTextBox1.AppendText("Opening Google News" + Environment.NewLine);
-                synthesizer.Speak("Opening Google News");
-
-                Process.Start(@"C:\Program Files (x86)\Mozilla Firefox\firefox.exe", @"C:\Users\Jayesh\Desktop\newsapi\google.html");
-
-
-            }
         }
-    
-   
-        
 
-        
+
+
+
+
 
         private void ExitWindowsEx(int v1, int v2)
         {
@@ -748,17 +691,16 @@ namespace WindowsFormsApplication3
         private void Form1_Load(object sender, EventArgs e)
         {
             this.ActiveControl = pictureBox1;
-           
+
         }
-        
+
 
     }
-    }
-
-    
-
-  
+}
 
 
-    
+
+
+
+
 
